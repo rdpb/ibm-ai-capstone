@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+import datetime
 
 def convert_to_ts(df_orig, country=None):
     """
@@ -19,11 +20,11 @@ def convert_to_ts(df_orig, country=None):
         df = df_orig
         
     ## use a date range to ensure all days are accounted for in the data
-    invoice_dates = df['invoice_date'].values
-    start_month = '{}-{}'.format(df['year'].values[0],str(df['month'].values[0]).zfill(2))
-    stop_month = '{}-{}'.format(df['year'].values[-1],str(df['month'].values[-1]).zfill(2))
+    invoice_dates_min = df['invoice_date'].min().strftime("%Y-%m-%d")
+    invoice_dates_max = (df['invoice_date'].max() + datetime.timedelta(1)).strftime("%Y-%m-%d")
+
     df_dates = df['invoice_date'].values.astype('datetime64[D]')
-    days = np.arange(start_month,stop_month,dtype='datetime64[D]')
+    days = np.arange(invoice_dates_min,invoice_dates_max,dtype='datetime64[D]')
     
     purchases = np.array([np.where(df_dates==day)[0].size for day in days])
     invoices = [np.unique(df[df_dates==day]['invoice'].values).size for day in days]
