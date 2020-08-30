@@ -9,6 +9,8 @@ def convert_to_ts(df_orig, country=None):
     given the original DataFrame (fetch_data())
     return a numerically indexed time-series DataFrame 
     by aggregating over each day
+
+    based on original from: https://github.com/aavail/ai-workflow-capstone
     """
 
     if country:
@@ -49,9 +51,7 @@ def engineer_features(df):
     for any given day the target becomes the sum of the next days revenue
     for that day we engineer several features that help predict the summed revenue
     
-    the 'training' flag will trim data that should not be used for training
-    when set to false all data will be returned
-
+    based on original from: https://github.com/aavail/ai-workflow-capstone
     """
 
     #print(df.head())
@@ -74,9 +74,7 @@ def engineer_features(df):
             mask = np.in1d(dates, np.arange(prev,current,dtype='datetime64[D]'))
             eng_features["previous_{}".format(num)].append(df[mask]['revenue'].sum())
 
-        ## get get the target revenue    
-        #plus_30 = current + np.timedelta64(30,'D')
-        #mask = np.in1d(dates, np.arange(current,plus_30,dtype='datetime64[D]'))
+        ## get the target revenue    
         y[d] = df.loc[d,'revenue']
 
         ## add some non-revenue features

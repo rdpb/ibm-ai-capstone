@@ -11,7 +11,9 @@ from .processing import convert_to_ts
 
 def fetch_data(data_dir):
     """
-    laod all json formatted files into a dataframe
+    load all json formatted files into a dataframe
+    
+    based on original from: https://github.com/aavail/ai-workflow-capstone
     """
 
     ## input testing
@@ -64,6 +66,8 @@ def fetch_ts(data_dir, clean=False):
     convenience function to read in new data
     uses csv to load quickly
     use clean=True when you want to re-create the files
+
+    based on original from: https://github.com/aavail/ai-workflow-capstone
     """
 
     ts_data_dir = os.path.join(data_dir,"ts-data")
@@ -91,15 +95,11 @@ def fetch_ts(data_dir, clean=False):
     table.sort_values(by='total_revenue',inplace=True,ascending=False)
     top_ten_countries =  np.array(list(table.index))[:10]
 
-    #file_list = [os.path.join(data_dir,f) for f in os.listdir(data_dir) if re.search("\.json",f)]
-    #countries = [os.path.join(data_dir,"ts-"+re.sub("\s+","_",c.lower()) + ".csv") for c in top_ten_countries]
-
     ## load the data
     dfs = {}
     dfs['all'] = convert_to_ts(df)
     for country in top_ten_countries:
         country_id = re.sub("\s+","_",country.lower())
-        #file_name = os.path.join(data_dir,"ts-"+ country_id + ".csv")
         dfs[country_id] = convert_to_ts(df,country=country)
 
     ## save the data as csvs    
