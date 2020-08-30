@@ -15,4 +15,6 @@ def ts_plot_pred(x,y,x_pred,y_pred,figx=10, figy=10, s_scatter=5, alpha_scatter=
     plt.plot(x,y,alpha=alpha_plot)
 
     plt.scatter(x_pred,y_pred,s=s_scatter,alpha=alpha_scatter, label="Predicted values")
+    plt.legend()
     plt.plot(x_pred,y_pred,alpha=alpha_plot)
+    
