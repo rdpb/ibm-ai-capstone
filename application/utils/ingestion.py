@@ -76,7 +76,10 @@ def fetch_ts(data_dir, clean=False):
     ## if files have already been processed load them        
     if len(os.listdir(ts_data_dir)) > 0:
         print("... loading ts data from files")
-        return({re.sub("\.csv","",cf)[3:]:pd.read_csv(os.path.join(ts_data_dir,cf)) for cf in os.listdir(ts_data_dir)})
+        result = {re.sub("\.csv","",cf)[3:]:pd.read_csv(os.path.join(ts_data_dir,cf)) for cf in os.listdir(ts_data_dir)}
+        for country, df in result.items():
+            result[country].date = pd.to_datetime(result[country].date)
+        return(result)
 
     ## get original data
     print("... processing data for loading")
@@ -88,15 +91,15 @@ def fetch_ts(data_dir, clean=False):
     table.sort_values(by='total_revenue',inplace=True,ascending=False)
     top_ten_countries =  np.array(list(table.index))[:10]
 
-    file_list = [os.path.join(data_dir,f) for f in os.listdir(data_dir) if re.search("\.json",f)]
-    countries = [os.path.join(data_dir,"ts-"+re.sub("\s+","_",c.lower()) + ".csv") for c in top_ten_countries]
+    #file_list = [os.path.join(data_dir,f) for f in os.listdir(data_dir) if re.search("\.json",f)]
+    #countries = [os.path.join(data_dir,"ts-"+re.sub("\s+","_",c.lower()) + ".csv") for c in top_ten_countries]
 
     ## load the data
     dfs = {}
     dfs['all'] = convert_to_ts(df)
     for country in top_ten_countries:
         country_id = re.sub("\s+","_",country.lower())
-        file_name = os.path.join(data_dir,"ts-"+ country_id + ".csv")
+        #file_name = os.path.join(data_dir,"ts-"+ country_id + ".csv")
         dfs[country_id] = convert_to_ts(df,country=country)
 
     ## save the data as csvs    
