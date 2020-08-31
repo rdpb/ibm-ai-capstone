@@ -28,7 +28,7 @@ def update_train_log(country, data_range,eval_metric,runtime,MODEL_VERSION,MODEL
             writer.writerow(header)
 
         to_write = map(str,[time.time(),uuid.uuid4(), country,
-                            data_shape,eval_metric,
+                            data_range,eval_metric,
                             MODEL_VERSION,MODEL_VERSION_NOTE,runtime])
         writer.writerow(to_write)
 
@@ -54,8 +54,8 @@ def update_predict_log(country, y_pred, y_lower, y_upper, query,runtime,MODEL_VE
         if write_header:
             writer.writerow(header)
 
-        to_write = map(str,[time.time(),uuid.uuid4(),
-                            y_pred,y_proba,query,tag,
+        to_write = map(str,[time.time(),uuid.uuid4(), country,
+                            y_pred,y_lower,y_upper,query,
                             MODEL_VERSION,runtime])
         writer.writerow(to_write)
 
@@ -65,11 +65,11 @@ if __name__ == "__main__":
     basic test procedure for logger.py
     """
 
-    from model import MODEL_VERSION, MODEL_VERSION_NOTE
+    from application.model import MODEL_VERSION, MODEL_VERSION_NOTE
     
     ## train logger
-    update_train_log("Brazil",(str(10),str(40)),"{'rmse':4.2}","00:00:01",
+    update_train_log("Brazil","('2000-01-01', '2019-01-01')","{'rmse':4.2}","00:00:01",
                      MODEL_VERSION, MODEL_VERSION_NOTE,test=True)
     ## predict logger
-    update_predict_log("Brazil","[0]","['united_states', 24, 'aavail_basic', 8]",
+    update_predict_log("Brazil", 1, -1, 3, "('2000-01-01', '2000-01-01')",
                        "00:00:01",MODEL_VERSION, test=True)

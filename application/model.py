@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error
 import re
 
 from application.utils.ingestion import fetch_ts
+from application.utils.logger import update_train_log,update_predict_log
 
 MODEL_DIR = "models"
 MODEL_VERSION = 1.0
@@ -66,12 +67,7 @@ def _model_train(df,country,test=False):
     runtime = "%03d:%02d:%02d"%(h, m, s)
 
     ## update log
-    print("UPDATE LOG")
-    print(country)
-    print(df.ds.min())
-    print(df.ds.max())
-    print(eval_rmse)
-    update_train_log(tag,(str(df.ds.min()),str(df.ds.max())),{'rmse':eval_rmse},runtime,
+    update_train_log(country,(str(df.ds.min()),str(df.ds.max())),{'rmse':eval_rmse},runtime,
                     MODEL_VERSION, MODEL_VERSION_NOTE,test=True)
 
 def model_train(data_dir,test=False):
@@ -98,6 +94,81 @@ def model_train(data_dir,test=False):
         
         _model_train(df,country,test=test)
 
+def model_load(prefix='prod',data_dir=None):
+    """
+    funtion to load model
+    """
+
+    if not data_dir:
+        data_dir = os.path.join("data","cs-train")
+    
+    models = [f for f in os.listdir(os.path.join(".","models")) if re.search(prefix,f)]
+
+    if len(models) == 0:
+        raise Exception("Models with prefix '{}' cannot be found -- have these been trained?".format(prefix))
+
+    all_models = {}
+    for model in models:
+        all_models[re.split("-",model)[1]] = joblib.load(os.path.join(".","models",model))
+
+    ## load data
+    ts_data = fetch_ts(data_dir)
+        
+    return(ts_data, all_models)
+
+def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=False):
+    """
+    funtion to predict from model
+    """
+
+    ## start timer for runtime
+    time_start = time.time()
+
+    ## load model if needed
+    if not all_models:
+        if test:
+            all_data,all_models = model_load(prefix='test')
+        else:
+            all_data,all_models = model_load()
+    
+    ## input checks
+    if country not in all_models.keys():
+        raise Exception("ERROR (model_predict) - model for country '{}' could not be found".format(country))
+
+    for d in [year,month,day]:
+        if re.search("\D",d):
+            raise Exception("ERROR (model_predict) - invalid year, month or day")
+    
+    ## load data
+    model = all_models[country]
+    data = all_data[country]
+
+    initial_date = "{}-{}-{}".format(year,month,day)
+    ## check date
+    if not n_next:
+        date_range = np.arange(pd.Timestamp(initial_date).to_numpy(), (pd.Timestamp(initial_date) + pd.DateOffset(months=1)).to_numpy(), dtype='datetime64[D]')
+    else:
+        date_range = np.arange(pd.Timestamp(initial_date).to_numpy(), pd.Timestamp(initial_date).to_numpy() + np.timedelta64(n_next,'D'), dtype='datetime64[D]')
+
+    df_test = pd.DataFrame({'ds':date_range})
+
+    ## make prediction and gather data for log entry
+    y_pred = model.predict(df_test)
+
+    m, s = divmod(time.time()-time_start, 60)
+    h, m = divmod(m, 60)
+    runtime = "%03d:%02d:%02d"%(h, m, s)
+
+    query = (pd.to_datetime(date_range[0]).strftime("%Y-%m-%d"), pd.to_datetime(date_range[-1]).strftime("%Y-%m-%d"))
+
+    ## update predict log
+    update_predict_log(country,y_pred.yhat.mean(),
+                        y_pred.yhat_lower.mean(), y_pred.yhat_upper.mean(),query,
+                        runtime, MODEL_VERSION, test=test)
+    
+    return({'y_pred':y_pred.yhat,\
+        'y_lower':y_pred.yhat_lower, 'y_upper':y_pred.yhat_upper})
+
 if __name__ == "__main__":
 
     """
@@ -109,16 +180,16 @@ if __name__ == "__main__":
     data_dir = os.path.join("data","cs-train")
     model_train(data_dir,test=True)
 
-    # ## load the model
-    # print("LOADING MODELS")
-    # all_data, all_models = model_load(prefix='test')
-    # print("... models loaded: ",",".join(all_models.keys()))
+    ## load the model
+    print("LOADING MODELS")
+    all_data, all_models = model_load(prefix='test')
+    print("... models loaded: ",",".join(all_models.keys()))
 
-    # print("PREDICTING")
-    # ## test predict
-    # country='all'
-    # year='2018'
-    # month='01'
-    # day='05'
-    # result = model_predict(country,year,month,day,test=True)
-    # print(result)
+    ## test predict
+    print("SAMPLE PREDICTION")
+    country='all'
+    year='2018'
+    month='01'
+    day='05'
+    result = model_predict(country,year,month,day,test=True)
+    print(result.keys())

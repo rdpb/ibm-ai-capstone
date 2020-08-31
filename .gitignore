@@ -1,3 +1,7 @@
 .jovianrc
+.vscode
 .ipynb_checkpoints
 models
+logs
+environment_old.yml
+environment_old2.yml
