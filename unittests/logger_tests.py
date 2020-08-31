@@ -26,8 +26,8 @@ class LoggerTest(unittest.TestCase):
             os.remove(log_file)
         
         ## update the log
-        country="Brazil"
-        data_range = "('2000-01-01', '2019-01-01')"
+        country="brazil"
+        data_range = "('2000-01-01', '2000-01-01')"
         eval_metric = {'rmse':0.5}
         runtime = "00:00:01"
         model_version = 0.1
@@ -46,7 +46,7 @@ class LoggerTest(unittest.TestCase):
         
         ## update the log
         country="brazil"
-        data_range = "('2000-01-01', '2019-01-01')"
+        data_range = "('2000-01-01', '2000-01-01')"
         eval_metric = {'rmse':0.5}
         runtime = "00:00:01"
         model_version = 0.1

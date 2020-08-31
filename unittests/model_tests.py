@@ -24,7 +24,10 @@ class ModelTest(unittest.TestCase):
 
         ## train the model
         model_train(data_dir, test=True)
-        self.assertTrue(os.path.exists(SAVED_MODEL))
+
+        # assert model folder exists and contains models (files ending with '.joblib')
+        self.assertTrue(os.path.exists(MODEL_DIR))
+        self.assertTrue(len([file for file in os.listdir(MODEL_DIR) if file.endswith(".joblib")])>0)
 
     def test_02_load(self):
         """
@@ -32,30 +35,32 @@ class ModelTest(unittest.TestCase):
         """
                         
         ## train the model
-        model = model_load()
+        _, all_models = model_load(prefix='test')
         
-        self.assertTrue('predict' in dir(model))
-        self.assertTrue('fit' in dir(model))
+        for country, model in all_models.items():
+            self.assertTrue('predict' in dir(model))
+            self.assertTrue('fit' in dir(model))
 
        
     def test_03_predict(self):
         """
         test the predict function input
         """
-
-        ## load model first
-        model = model_load()
     
-        ## ensure that a list can be passed
-        query = {'country': ['united_states','singapore','united_states'],
-                 'age': [24,42,20],
-                 'subscriber_type': ['aavail_basic','aavail_premium','aavail_basic'],
-                 'num_streams': [8,17,14]
-        }
+        ## query to be passed
+        country = 'all'
+        year = 2018
+        month = 2
+        n_next = 20
 
-        result = model_predict(query,model,test=True)
+        result = model_predict(country,year,month,n_next=n_next,test=True)
         y_pred = result['y_pred']
-        self.assertTrue(y_pred[0] in [0,1])
+        y_lower = result['y_lower']
+        y_upper = result['y_upper']
+
+        self.assertTrue(len(y_pred)==n_next)
+        self.assertTrue(len(y_lower)==n_next)
+        self.assertTrue(len(y_upper)==n_next)
 
 
 ### Run the tests

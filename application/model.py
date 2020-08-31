@@ -136,7 +136,7 @@ def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=Fals
         raise Exception("ERROR (model_predict) - model for country '{}' could not be found".format(country))
 
     for d in [year,month,day]:
-        if re.search("\D",d):
+        if not isinstance(d, int):
             raise Exception("ERROR (model_predict) - invalid year, month or day")
     
     ## load data
