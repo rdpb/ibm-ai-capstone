@@ -5,3 +5,6 @@ models
 logs
 environment_old.yml
 environment_old2.yml
+evaluation
+unittests/__pycache__
+dashboards/__pycache__
