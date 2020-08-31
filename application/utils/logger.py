@@ -17,7 +17,7 @@ def update_train_log(country, data_range,eval_metric,runtime,MODEL_VERSION,MODEL
         logfile = os.path.join("logs","train-{}-{}.log".format(today.year, today.month))
         
     ## write the data to a csv file    
-    header = ['unique_id','timestamp','x_shape','eval_metric','model_version',
+    header = ['timestamp','unique_id','country','data_range','eval_metric','model_version',
               'model_version_note','runtime']
     write_header = False
     if not os.path.exists(logfile):
@@ -45,7 +45,7 @@ def update_predict_log(country, y_pred, y_lower, y_upper, query,runtime,MODEL_VE
         logfile = os.path.join("logs","predict-{}-{}.log".format(today.year, today.month))
         
     ## write the data to a csv file    
-    header = ['unique_id','timestamp','y_pred','y_proba','query','model_version','runtime']
+    header = ['timestamp','unique_id','country','y_pred','y_lower', 'y_upper','query','model_version','runtime']
     write_header = False
     if not os.path.exists(logfile):
         write_header = True

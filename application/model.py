@@ -68,7 +68,7 @@ def _model_train(df,country,test=False):
 
     ## update log
     update_train_log(country,(str(df.ds.min()),str(df.ds.max())),{'rmse':eval_rmse},runtime,
-                    MODEL_VERSION, MODEL_VERSION_NOTE,test=True)
+                    MODEL_VERSION, MODEL_VERSION_NOTE,test=test)
 
 def model_train(data_dir,test=False):
     """
@@ -127,9 +127,9 @@ def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=Fals
     ## load model if needed
     if not all_models:
         if test:
-            all_data,all_models = model_load(prefix='test')
+            _,all_models = model_load(prefix='test')
         else:
-            all_data,all_models = model_load()
+            _,all_models = model_load()
     
     ## input checks
     if country not in all_models.keys():
@@ -141,7 +141,7 @@ def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=Fals
     
     ## load data
     model = all_models[country]
-    data = all_data[country]
+    #data = all_data[country]
 
     initial_date = "{}-{}-{}".format(year,month,day)
     ## check date

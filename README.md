@@ -13,3 +13,10 @@ Lastly, the third one consists of building a draft version of the API and serve 
 ## Part 2
 
 ## Part 3
+
+### API
+
+### Docker
+
+### Unit testing
+
