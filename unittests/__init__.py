@@ -1,36 +1,19 @@
-# import unittest
-# import getopt
-# import sys
-# import os
+try:
+    import unittest2 as unittest
+except:
+    import unittest
 
-# ## parse inputs
-# try:
-#     optlist, args = getopt.getopt(sys.argv[1:],'v')
-# except getopt.GetoptError:
-#     print(getopt.GetoptError)
-#     print(sys.argv[0] + "-v")
-#     print("... the verbose flag (-v) may be used")
-#     sys.exit()
 
-# VERBOSE = False
-# RUNALL = False
+## api tests
+from unittests.api_tests import *
+ApiTestSuite = unittest.TestLoader().loadTestsFromTestCase(ApiTest)
 
-# sys.path.append(os.path.realpath(os.path.dirname(__file__)))
+## model tests
+from unittests.model_tests import *
+ModelTestSuite = unittest.TestLoader().loadTestsFromTestCase(ModelTest)
 
-# for o, a in optlist:
-#     if o == '-v':
-#         VERBOSE = True
+## logger tests
+from unittests.logger_tests import *
+LoggerTestSuite = unittest.TestLoader().loadTestsFromTestCase(LoggerTest)
 
-# ## api tests
-# from ApiTests import *
-# ApiTestSuite = unittest.TestLoader().loadTestsFromTestCase(ApiTest)
-
-# ## model tests
-# from ModelTests import *
-# ModelTestSuite = unittest.TestLoader().loadTestsFromTestCase(ModelTest)
-
-# ## logger tests
-# from LoggerTests import *
-# LoggerTestSuite = unittest.TestLoader().loadTestsFromTestCase(LoggerTest)
-
-# MainSuite = unittest.TestSuite([LoggerTestSuite,ModelTestSuite,ApiTestSuite])
+MainSuite = unittest.TestSuite([LoggerTestSuite,ModelTestSuite, ApiTestSuite])

@@ -1,10 +1,15 @@
 """
-model tests
+logger tests
 """
 
+try:
+    import unittest2 as unittest
+except:
+    import unittest
+    
 import os
 import csv
-import unittest2 as unittest
+import unittest
 from ast import literal_eval
 import pandas as pd
 

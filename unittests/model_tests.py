@@ -2,9 +2,14 @@
 model tests
 """
 
+try:
+    import unittest2 as unittest
+except:
+    import unittest
+
 import os
 import csv
-import unittest2 as unittest
+import numbers
 from ast import literal_eval
 import pandas as pd
 
@@ -20,10 +25,10 @@ class ModelTest(unittest.TestCase):
         """
         test the train functionality
         """
-        data_dir = os.path.join('data', 'cs-train')
+        #data_dir = os.path.join('data', 'cs-train')
 
         ## train the model
-        model_train(data_dir, test=True)
+        model_train(test=True)
 
         # assert model folder exists and contains models (files ending with '.joblib')
         self.assertTrue(os.path.exists(MODEL_DIR))
@@ -61,6 +66,15 @@ class ModelTest(unittest.TestCase):
         self.assertTrue(len(y_pred)==n_next)
         self.assertTrue(len(y_lower)==n_next)
         self.assertTrue(len(y_upper)==n_next)
+
+        for i in y_pred:
+            self.assertTrue(isinstance(i, numbers.Number))
+
+        for i in y_lower:
+            self.assertTrue(isinstance(i, numbers.Number))
+
+        for i in y_upper:
+            self.assertTrue(isinstance(i, numbers.Number))
 
 
 ### Run the tests
