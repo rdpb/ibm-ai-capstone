@@ -70,10 +70,13 @@ def _model_train(df,country,test=False):
     update_train_log(country,(str(df.ds.min()),str(df.ds.max())),{'rmse':eval_rmse},runtime,
                     MODEL_VERSION, MODEL_VERSION_NOTE,test=test)
 
-def model_train(data_dir,test=False):
+def model_train(data_dir=None,test=False):
     """
     funtion to train model given a df
     """
+
+    if not data_dir:
+        data_dir = os.path.join("data","cs-train")
     
     if not os.path.isdir(MODEL_DIR):
         os.mkdir(MODEL_DIR)
@@ -102,14 +105,14 @@ def model_load(prefix='prod',data_dir=None):
     if not data_dir:
         data_dir = os.path.join("data","cs-train")
     
-    models = [f for f in os.listdir(os.path.join(".","models")) if re.search(prefix,f)]
+    models = [f for f in os.listdir(os.path.join(".",MODEL_DIR)) if re.search(prefix,f)]
 
     if len(models) == 0:
         raise Exception("Models with prefix '{}' cannot be found -- have these been trained?".format(prefix))
 
     all_models = {}
     for model in models:
-        all_models[re.split("-",model)[1]] = joblib.load(os.path.join(".","models",model))
+        all_models[re.split("-",model)[1]] = joblib.load(os.path.join(".",MODEL_DIR,model))
 
     ## load data
     ts_data = fetch_ts(data_dir)
@@ -166,8 +169,8 @@ def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=Fals
                         y_pred.yhat_lower.mean(), y_pred.yhat_upper.mean(),query,
                         runtime, MODEL_VERSION, test=test)
     
-    return({'y_pred':y_pred.yhat,\
-        'y_lower':y_pred.yhat_lower, 'y_upper':y_pred.yhat_upper})
+    return({'y_pred':y_pred.yhat.values,\
+        'y_lower':y_pred.yhat_lower.values, 'y_upper':y_pred.yhat_upper.values})
 
 if __name__ == "__main__":
 
