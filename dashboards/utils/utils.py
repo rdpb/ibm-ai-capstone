@@ -1,10 +1,27 @@
-# From https://github.com/plotly/dash-sample-apps/blob/master/apps/dash-financial-report/utils.py
-
+import os
 
 import dash_html_components as html
 import dash_core_components as dcc
 
+from application.utils.ingestion import get_country_names
+from application.model import model_load, model_train
 
+# General data structures
+try:
+    data, models = model_load()
+except:
+    model_train()
+    data, models = model_load()
+    
+# Country to identifier mappings
+country_mapping = {'all':'All', **get_country_names()}
+country_names = []
+
+for key,country in country_mapping.items():
+    if key in data.keys():
+        country_names.append({'label':country,'value':key})
+
+# Layout utils
 def Header(app):
     return html.Div([get_header(app), get_menu()], className="row")
 

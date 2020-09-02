@@ -170,7 +170,9 @@ def model_predict(country,year,month,day=1,n_next=None,all_models=None,test=Fals
                         runtime, MODEL_VERSION, test=test)
     
     return({'y_pred':y_pred.yhat.values,\
-        'y_lower':y_pred.yhat_lower.values, 'y_upper':y_pred.yhat_upper.values})
+            'y_lower':y_pred.yhat_lower.values, 
+            'y_upper':y_pred.yhat_upper.values,
+            'date_range':date_range})
 
 if __name__ == "__main__":
 
