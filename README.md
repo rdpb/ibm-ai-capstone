@@ -30,6 +30,7 @@ Additionally, a web interface was created for visualizing predicitons and monito
 ### Model
 
 Main model methods (train, load and predict) are implemented in ``application/model.py``. Training can be started using ``run-train.py`` in the root folder.
+By default, it will use the files in the ``data/cs-train`` folder.
 
 ### API
 
@@ -49,7 +50,9 @@ All unit tests can be run using ``run-tests.py``.
 
 ### Docker
 
-A Docker image was built using the ``Dockerfile`` in the repository, and was made available at Docker hub. 
+A Docker image was built using the ``Dockerfile`` in the repository, and was made available at Docker hub as ``rdpb/ibm-ai-capstone``. It can be obtained by running ``docker pull rdpb/ibm-ai-capstone:latest``. Alternatively, one can build the image from the ``Dockerfile`` by running ``docker build -t rdpb/ibm-ai-capstone``.
+
+With the built image, one can run the container with ``docker run -p 8050:8050 rdpb/ibm-ai-capstone``
 
 ### Web interface
 
