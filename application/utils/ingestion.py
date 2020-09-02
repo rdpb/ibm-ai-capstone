@@ -108,6 +108,20 @@ def fetch_ts(data_dir, clean=False):
         
     return(dfs)
 
+def get_country_names(data_dir=None):
+    if not data_dir:
+        data_dir = os.path.join("data", "cs-train")
+
+    df = fetch_data(data_dir)
+
+    m = {}
+
+    for country in df['country'].unique().tolist():
+        country_id = re.sub("\s+","_",country.lower())
+        m[country_id] = country
+
+    return m
+
 if __name__ == "__main__":
 
     run_start = time.time() 

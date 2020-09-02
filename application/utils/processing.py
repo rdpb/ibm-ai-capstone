@@ -4,6 +4,7 @@ import re
 import datetime
 from collections import defaultdict
 
+
 def convert_to_ts(df_orig, country=None):
     """
     given the original DataFrame (fetch_data())

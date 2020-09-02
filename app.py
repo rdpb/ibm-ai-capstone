@@ -118,4 +118,4 @@ def logs(filename):
     return send_from_directory(log_dir, filename, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host="0.0.0.0", port=8050)
